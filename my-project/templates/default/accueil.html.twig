@@ -1,5 +1,8 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>truc</h1>
+    {% for val in data %}
+        <img src="https://image.tmdb.org/t/p/w500{{ val.poster_path }}" alt="">
+    {% endfor %}
+
 {% endblock %}

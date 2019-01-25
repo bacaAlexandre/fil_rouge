@@ -19,13 +19,16 @@ class DefaultController extends AbstractController
     {
         Unirest\Request::verifyPeer(false);
         $header = array('Accept' => 'application/json');
-        $body =array(
-            'api_key'=> getenv('API_KEY'),
-            'language'=> getenv('API_LANG'));
+        $body = array(
+            'api_key' => getenv('API_KEY'),
+            'language' => getenv('API_LANG'));
 
-        $reponse = Unirest\Request::get('https://api.themoviedb.org/3/trending/movie/day',$header,$body);
+        $reponse = Unirest\Request::get('https://api.themoviedb.org/3/trending/movie/day', $header, $body);
 
-        dump($reponse->body);
-        return $this->render('default/accueil.html.twig');
+        $data = array();
+        for ($i = 0; $i < count($reponse->body->results); $i++) {
+            $data[$i]['poster_path'] = $reponse->body->results[$i]->poster_path;
+        }
+        return $this->render('default/accueil.html.twig', array('data' => $data));
     }
 }
