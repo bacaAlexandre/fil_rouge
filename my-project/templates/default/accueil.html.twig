@@ -1,8 +1,19 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    {% for val in data %}
-        <img src="https://image.tmdb.org/t/p/w500{{ val.poster_path }}" alt="">
-    {% endfor %}
+    <div class="accueil_regroupement">
+        {% for val in data %}
+            <div class="accueil_bloc_image">
+                <img src="https://image.tmdb.org/t/p/w500{{ val.poster_path }}" alt="">
+                <div>
+                    <h4>{{ val.title }}</h4>
+                    <p>{{ val.overview }}</p>
+                    <button>Détail</button>
+                </div>
+            </div>
+
+        {% endfor %}
+    </div>
+
 
 {% endblock %}
