@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    <div class="film_bloc_haut">
+        <img src="https://image.tmdb.org/t/p/w500{{ data.poster_path }}" alt="" class="film_poster">
+        <div class="film_haut_info">
+            <h3>{{ data.title }}</h3>
+            <span>Sortie le :{{ data.release_date }}</span>
+            <p>Réalisé par : </p>
+            <p>Nationalité: </p>
+            <p>Genre: </p>
+            <p>Durée: {{ data.runtime/60 }}</p>
+            <q>{{ data.tagline }}</q>
+            <p>{{ data.overview }}</p>
+        </div>
+    </div>
+
+{#    {% for img in data.images.backdrops %}#}
+{#        <img src="https://image.tmdb.org/t/p/w500{{ img.file_path }}" alt="">#}
+{#    {% endfor %}#}
+{% endblock %}

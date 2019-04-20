@@ -8,7 +8,9 @@
                 <div>
                     <h4>{{ val.title }}</h4>
                     <p>{{ val.overview }}</p>
-                    <button>Détail</button>
+                    <form action="{{ path('page_film',{'id':val.id }) }}">
+                        <button>Détail</button>
+                    </form>
                 </div>
             </div>
 
