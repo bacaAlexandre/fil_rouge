@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 
+use App\Service\Convertisseur;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -11,6 +12,13 @@ use Unirest;
 
 class DefaultController extends AbstractController
 {
+
+    private $convertisseur;
+
+    public function __construct(Convertisseur $convertisseur)
+    {
+        $this->convertisseur = $convertisseur;
+    }
 
     /**
      * @Route("/accueil", name="homepage")
@@ -51,8 +59,17 @@ class DefaultController extends AbstractController
 
         $reponse = Unirest\Request::get('https://api.themoviedb.org/3/movie/'.$id, $header, $body);
 
-
         dump($reponse);
-        return $this->render('default/film.html.twig', array('data' => $reponse->body));
+        $data['poster_path'] = $reponse->body->poster_path;
+        $data['title'] = $reponse->body->title;
+        $data['release_date'] = $this->convertisseur->jourENtoFR($reponse->body->release_date);
+        $data['runtime'] =  $this->convertisseur->decimalToHoursMin($reponse->body->runtime);
+        $data['tagline'] = $reponse->body->tagline;
+        $data['overview'] = $reponse->body->overview;
+        $data['genres'] = $reponse->body->genres;
+
+
+
+        return $this->render('default/film.html.twig', array('data' => $data));
     }
 }
