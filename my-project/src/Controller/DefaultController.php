@@ -21,7 +21,7 @@ class DefaultController extends AbstractController
     }
 
     /**
-     * @Route("/accueil", name="homepage")
+     * @Route("", name="homepage")
      */
     public function index()
     {
@@ -59,7 +59,6 @@ class DefaultController extends AbstractController
 
         $reponse = Unirest\Request::get('https://api.themoviedb.org/3/movie/'.$id, $header, $body);
 
-        dump($reponse);
         $data['poster_path'] = $reponse->body->poster_path;
         $data['title'] = $reponse->body->title;
         $data['release_date'] = $this->convertisseur->jourENtoFR($reponse->body->release_date);
