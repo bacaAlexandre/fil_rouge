@@ -55,20 +55,25 @@ class DefaultController extends AbstractController
             'language' => getenv('API_LANG'),
             'append_to_response' => "videos,images",
             'include_image_language' => "fr,null",
-            );
+        );
 
-        $reponse = Unirest\Request::get('https://api.themoviedb.org/3/movie/'.$id, $header, $body);
+        $reponse = Unirest\Request::get('https://api.themoviedb.org/3/movie/' . $id, $header, $body);
 
         $data['poster_path'] = $reponse->body->poster_path;
         $data['title'] = $reponse->body->title;
         $data['release_date'] = $this->convertisseur->jourENtoFR($reponse->body->release_date);
-        $data['runtime'] =  $this->convertisseur->decimalToHoursMin($reponse->body->runtime);
+        $data['runtime'] = $this->convertisseur->decimalToHoursMin($reponse->body->runtime);
         $data['tagline'] = $reponse->body->tagline;
         $data['overview'] = $reponse->body->overview;
         $data['genres'] = $reponse->body->genres;
+        $data['path_video'] = "";
+        foreach ($reponse->body->videos->results as $result) {
 
-
-
+            if ($result->site == "YouTube") {
+                $data['path_video'] = "https://www.youtube.com/embed/" . $result->key;
+                break;
+            }
+        }
         return $this->render('default/film.html.twig', array('data' => $data));
     }
 }
