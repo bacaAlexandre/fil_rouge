@@ -22,10 +22,10 @@ class Notes
     private $valeur;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Utilisateurs", inversedBy="notes")
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="notes")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $utilisateur;
+    private $user;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\films", inversedBy="notes")
@@ -50,14 +50,14 @@ class Notes
         return $this;
     }
 
-    public function getUtilisateur(): ?Utilisateurs
+    public function getUtilisateur(): ?User
     {
-        return $this->utilisateur;
+        return $this->user;
     }
 
-    public function setUtilisateur(?Utilisateurs $utilisateur): self
+    public function setUtilisateur(?User $user): self
     {
-        $this->utilisateur = $utilisateur;
+        $this->user = $user;
 
         return $this;
     }

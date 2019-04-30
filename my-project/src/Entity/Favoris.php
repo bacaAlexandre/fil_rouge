@@ -17,10 +17,10 @@ class Favoris
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Utilisateurs", inversedBy="favoris")
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="favoris")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $utilisateur;
+    private $user;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Films")
@@ -33,14 +33,14 @@ class Favoris
         return $this->id;
     }
 
-    public function getUtilisateur(): ?Utilisateurs
+    public function getUtilisateur(): ?User
     {
-        return $this->utilisateur;
+        return $this->user;
     }
 
-    public function setUtilisateur(?Utilisateurs $utilisateur): self
+    public function setUtilisateur(?User $user): self
     {
-        $this->utilisateur = $utilisateur;
+        $this->user = $user;
 
         return $this;
     }

@@ -22,10 +22,10 @@ class Commentaires
     private $contenu;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Utilisateurs", inversedBy="commentaires")
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="commentaires")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $utilisateur;
+    private $user;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Films", inversedBy="commentaires")
@@ -50,14 +50,14 @@ class Commentaires
         return $this;
     }
 
-    public function getUtilisateur(): ?Utilisateurs
+    public function getUtilisateur(): ?User
     {
-        return $this->utilisateur;
+        return $this->user;
     }
 
-    public function setUtilisateur(?Utilisateurs $utilisateur): self
+    public function setUtilisateur(?User $user): self
     {
-        $this->utilisateur = $utilisateur;
+        $this->user = $user;
 
         return $this;
     }
