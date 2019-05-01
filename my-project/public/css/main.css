@@ -1,7 +1,8 @@
 
-html {
+html, body {
     box-sizing: border-box;
     background-color: rgb(21, 21, 21);
+    color: #dadada;
 }
 
 *, *::before, *::after {
@@ -116,4 +117,13 @@ h1,h2,h3,h4,h5,h6{
 .film_genre:hover {
     background-color:  red;
     color: white;
+}
+
+
+/**********Formulaire fosuser**************/
+
+.form_fosuser{
+    max-width: 80%;
+    min-width: 300px;
+    margin: auto;
 }

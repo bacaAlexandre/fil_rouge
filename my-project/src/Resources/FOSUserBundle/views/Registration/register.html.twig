@@ -1,0 +1,12 @@
+{% extends "base.html.twig" %}
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% block fos_user_content %}
+    <h2 class="h2">Inscription</h2>
+{{ form_start(form, {'method': 'post', 'action': path('fos_user_registration_register'), 'attr': {'class': 'fos_user_registration_register'}}) }}
+    {{ form_widget(form) }}
+<div>
+    <input type="submit" class="btn btn-outline-light" value="{{ 'registration.submit'|trans }}" />
+</div>
+{{ form_end(form) }}
+{% endblock %}
