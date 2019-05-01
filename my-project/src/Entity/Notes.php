@@ -22,7 +22,7 @@ class Notes
     private $valeur;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="notes")
+     * @ORM\ManyToOne(targetEntity="App\Application\Sonata\UserBundle\Entity\User", inversedBy="notes")
      * @ORM\JoinColumn(nullable=false)
      */
     private $user;

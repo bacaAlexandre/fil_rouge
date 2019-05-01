@@ -17,7 +17,7 @@ class Favoris
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="favoris")
+     * @ORM\ManyToOne(targetEntity="App\Application\Sonata\UserBundle\Entity\User", inversedBy="favoris")
      * @ORM\JoinColumn(nullable=false)
      */
     private $user;

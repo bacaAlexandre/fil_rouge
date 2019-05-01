@@ -1,5 +1,7 @@
 framework:
-  templating: { engines: [twig] }
+  templating:
+    engines: ['twig', 'php']
+
 #
 #fos_user:
 #  db_driver: orm
@@ -30,3 +32,5 @@ fos_user:
   from_email:
     address: "fosub@localhost"
     sender_name: "FOSUB"
+
+

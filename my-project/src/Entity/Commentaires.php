@@ -22,7 +22,7 @@ class Commentaires
     private $contenu;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="commentaires")
+     * @ORM\ManyToOne(targetEntity="App\Application\Sonata\UserBundle\Entity\User", inversedBy="commentaires")
      * @ORM\JoinColumn(nullable=false)
      */
     private $user;
