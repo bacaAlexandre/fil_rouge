@@ -3,16 +3,22 @@ html, body {
     box-sizing: border-box;
     background-color: rgb(21, 21, 21);
     color: #dadada;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
 }
-
+body{
+    display: flex;
+    flex-direction: column;
+}
+main{
+    flex-grow:1;
+}
 *, *::before, *::after {
     box-sizing: border-box;
 }
 h1,h2,h3,h4,h5,h6{
     margin: 0px;
-}
-.navigation_principal {
-
 }
 
 .navigation_principal > ul {
@@ -22,12 +28,16 @@ h1,h2,h3,h4,h5,h6{
     padding: 0;
     list-style:none;
 }
-
-.navigation_principal a[class=lien_nav] {
+.footer_principal{
+    padding: 25px;
+    display: flex;
+    justify-content: space-around;
+}
+.navigation_principal a[class=lien_nav], .footer_principal a{
     color: #dadada;
     text-decoration: none;
 }
-.navigation_principal a[class=lien_nav]:hover {
+.navigation_principal a[class=lien_nav]:hover,.footer_principal a {
     color: #be0000;
 }
 

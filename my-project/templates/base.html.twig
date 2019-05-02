@@ -15,9 +15,13 @@
         <ul>
             <li>  <a href="" class="lien_nav">Recherche</a></li>
             <li> <a href="{{ path('homepage') }}" id="logo">Netflex</a></li>
-            <li> <a href="" class="lien_nav">Mon compte</a></li>
-            <li> <a href="{{ path('fos_user_security_login') }}" class="lien_nav">Connexion</a></li>
-            <li> <a href="{{ path('fos_user_registration_register') }}" class="lien_nav">Inscription</a></li>
+            {% if app.user is null %}
+                <li> <a href="{{ path('fos_user_security_login') }}" class="lien_nav">Connexion</a></li>
+                <li> <a href="{{ path('fos_user_registration_register') }}" class="lien_nav">Inscription</a></li>
+            {% else %}
+                <li> <a href="" class="lien_nav">Mon compte</a></li>
+                <li> <a href="{{ path('fos_user_security_logout') }}" class="lien_nav">Déconnexion</a></li>
+            {% endif %}
         </ul>
     </nav>
 </header>
@@ -29,8 +33,13 @@
         {% endblock %}
     </div>
 </main>
-<footer>
-
+<footer class="footer_principal">
+    {% if is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('sonata_admin_dashboard') }}" class="lien_nav">Mode Admin</a>
+    {% else %}
+        <a href="" class="lien_nav">Nous contacter</a>
+    {% endif %}
+    <span>© 2019 Copyright: NetFlex</span>
 </footer>
 {% block javascripts %}
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
