@@ -32,3 +32,9 @@ services:
 #        arguments: [~, App\Application\Sonata\UserBundle\Entity\User, ~]
 #        tags:
 #            - { name: sonata.admin, manager_type: orm, label: User }
+
+
+    app.form.profile:
+        class: App\Form\ProfileFormType
+        tags:
+            - { name: form.type, alias: app_user_editProfil }

@@ -33,4 +33,7 @@ fos_user:
     address: "fosub@localhost"
     sender_name: "FOSUB"
 
+  profile:
+    form:
+      type: App\Form\ProfileFormType
 

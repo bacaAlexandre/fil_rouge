@@ -19,7 +19,7 @@
                 <li> <a href="{{ path('fos_user_security_login') }}" class="lien_nav">Connexion</a></li>
                 <li> <a href="{{ path('fos_user_registration_register') }}" class="lien_nav">Inscription</a></li>
             {% else %}
-                <li> <a href="" class="lien_nav">Mon compte</a></li>
+                <li> <a href="{{ path('fos_user_profile_edit') }}" class="lien_nav">Mon compte</a></li>
                 <li> <a href="{{ path('fos_user_security_logout') }}" class="lien_nav">Déconnexion</a></li>
             {% endif %}
         </ul>
