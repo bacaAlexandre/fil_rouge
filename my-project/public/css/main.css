@@ -153,6 +153,7 @@ h1, h2, h3, h4, h5, h6 {
     justify-content: space-around;
     text-align: center;
     font-size: 26px;
+    min-width: 200px;
 }
 .icone_red {
     color: red;
@@ -194,3 +195,33 @@ h1, h2, h3, h4, h5, h6 {
     min-width: 300px;
     margin: auto;
 }
+
+
+
+/****** Responsive ********/
+
+
+/**Parie film***/
+
+@media (max-width: 1200px){
+    .film_poster{
+        display: none;
+    }
+}
+
+@media (max-width: 750px){
+    .film_haut_info{
+        margin-left: 0;
+        max-width: 100%;
+    }
+    .film_header_haut{
+        flex-direction: column;
+    }
+    .film_haut_notes{
+        flex-direction: row;
+    }
+    .film_bloc_video iframe{
+        max-width: 100%;
+    }
+}
+
