@@ -17,8 +17,16 @@
                 </div>
                 <div class="film_haut_notes">
                     {% if is_granted('ROLE_USER') %}
-                        <span class="oi oi-heart" title="heart" aria-hidden="true"></span>
-                        <span class="oi oi-eye" title="eye" aria-hidden="true"></span>
+                        {% if data.favoris.favoris %}
+                            <span class="oi oi-heart icone_red" title="heart" aria-hidden="true"></span>
+                        {% else %}
+                            <span class="oi oi-heart" title="heart" aria-hidden="true"></span>
+                        {% endif %}
+                        {% if data.favoris.vue  %}
+                            <span class="oi oi-eye icone_red" title="eye" aria-hidden="true"></span>
+                        {% else %}
+                            <span class="oi oi-eye" title="eye" aria-hidden="true"></span>
+                        {% endif %}
                     {% endif %}
                     <div class="film_bloc_etoile">
                         {% if data.noteMoyenne is not  null %}
@@ -57,6 +65,8 @@
 {% block javascripts %}
     {{ parent() }}
     <script>
+
+        /****PARTIE NOTES****/
         $('.film_bloc_etoile span[title="star"]').hover(function () {
             removeRed();
             let place = $(this).data("place");
@@ -112,5 +122,52 @@
                 },
             });
         }
+
+        /*****PARTIE FAVORIS*****/
+
+        $('.film_haut_notes span[title=heart]').click(function () {
+            $(this).toggleClass('icone_red');
+            let favoris = 0;
+            if ($(this).hasClass('icone_red')) {
+                favoris = 1;
+            }
+            $.ajax({
+                url: "{{ path('add_favoris') }}",
+                dataType: "json",
+                method: "POST",
+                data: {
+                    favoris: favoris,
+                    idFilm:{{ data.id }},
+                    titre: "{{ data.title }}",
+                },
+                success: function (data) {
+                },
+            });
+        });
+
+
+
+        /*****PARTIE VUE*****/
+
+        $('.film_haut_notes span[title=eye]').click(function () {
+            $(this).toggleClass('icone_red');
+            let vue = 0;
+            if ($(this).hasClass('icone_red')) {
+                vue = 1;
+            }
+            $.ajax({
+                url: "{{ path('add_vue') }}",
+                dataType: "json",
+                method: "POST",
+                data: {
+                    vue: vue,
+                    idFilm:{{ data.id }},
+                    titre: "{{ data.title }}",
+                },
+                success: function (data) {
+                },
+            });
+        });
+
     </script>
 {% endblock %}

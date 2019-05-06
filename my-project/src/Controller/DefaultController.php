@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Favoris;
 use App\Entity\Films;
 use App\Entity\Notes;
 
@@ -88,9 +89,10 @@ class DefaultController extends AbstractController
         $data['noteMoyenne'] = $noteMoyenne['Moyenne'];
         if ($this->getUser() != null) {
             $film = $em->getRepository(Films::class)->findOneBy(array("idApi" => $data['id']));
-            if($film != null){
+            if ($film != null) {
                 $data['note'] = $em->getRepository(Notes::class)->findOneBy(array("user" => $this->getUser()->getId(), "film" => $film->getId()));
-            }else{
+                $data['favoris'] = $em->getRepository(Favoris::class)->findOneBy(array("user" => $this->getUser()->getId(), "film" => $film->getId()));
+            } else {
                 $data['note'] = null;
             }
 
@@ -177,5 +179,56 @@ class DefaultController extends AbstractController
 
         return $film;
 
+    }
+
+    /**
+     * @Route("/addFavoris", name="add_favoris")
+     */
+    public function addFavoris(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $user = $em->getRepository("App\\Application\\Sonata\\UserBundle\\Entity\\User")->find($this->getUser()->getId());
+
+        $film = $this->checkFilm($request->request->get("idFilm"), $request->request->get("titre"));
+        $entityFav = $em->getRepository(Favoris::class)->findOneBy(array("user" => $this->getUser()->getId(), "film" => $film->getId()));
+
+        if ($entityFav == null) {
+            $entityFav = new Favoris();
+            $entityFav->setFilm($this->checkFilm($request->request->get("idFilm"), $request->request->get("titre")))
+                ->setUser($user);
+        }
+
+        $entityFav->setFavoris($request->request->get('favoris'));
+
+        $em->persist($entityFav);
+        $em->flush();
+
+
+        return $this->json(['result' => 'ok']);
+    }
+    /**
+     * @Route("/addVue", name="add_vue")
+     */
+    public function addVue(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $user = $em->getRepository("App\\Application\\Sonata\\UserBundle\\Entity\\User")->find($this->getUser()->getId());
+
+        $film = $this->checkFilm($request->request->get("idFilm"), $request->request->get("titre"));
+        $entityFav = $em->getRepository(Favoris::class)->findOneBy(array("user" => $this->getUser()->getId(), "film" => $film->getId()));
+
+        if ($entityFav == null) {
+            $entityFav = new Favoris();
+            $entityFav->setFilm($this->checkFilm($request->request->get("idFilm"), $request->request->get("titre")))
+                ->setUser($user);
+        }
+
+        $entityFav->setVue($request->request->get('vue'));
+
+        $em->persist($entityFav);
+        $em->flush();
+
+
+        return $this->json(['result' => 'ok']);
     }
 }

@@ -28,17 +28,27 @@ class Favoris
      */
     private $film;
 
+    /**
+     * @ORM\Column(type="boolean", options={"default"="0"})
+     */
+    private $vue = "0";
+
+    /**
+     * @ORM\Column(type="boolean", options={"default"="0"})
+     */
+    private $favoris = "0";
+
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getUtilisateur(): ?User
+    public function getUser()
     {
         return $this->user;
     }
 
-    public function setUtilisateur(?User $user): self
+    public function setUser( $user): self
     {
         $this->user = $user;
 
@@ -53,6 +63,30 @@ class Favoris
     public function setFilm(?Films $film): self
     {
         $this->film = $film;
+
+        return $this;
+    }
+
+    public function getVue(): ?bool
+    {
+        return $this->vue;
+    }
+
+    public function setVue(bool $vue): self
+    {
+        $this->vue = $vue;
+
+        return $this;
+    }
+
+    public function getFavoris(): ?bool
+    {
+        return $this->favoris;
+    }
+
+    public function setFavoris(bool $favoris): self
+    {
+        $this->favoris = $favoris;
 
         return $this;
     }
