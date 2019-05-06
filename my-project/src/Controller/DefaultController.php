@@ -97,6 +97,7 @@ class DefaultController extends AbstractController
             }
 
         }
+        dump($data);
         return $this->render('default/film.html.twig', array('data' => $data));
     }
 

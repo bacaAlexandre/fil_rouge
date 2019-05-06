@@ -17,12 +17,12 @@
                 </div>
                 <div class="film_haut_notes">
                     {% if is_granted('ROLE_USER') %}
-                        {% if data.favoris.favoris %}
+                        {% if data.favoris is defined and data.favoris is not null and data.favoris.favoris %}
                             <span class="oi oi-heart icone_red" title="heart" aria-hidden="true"></span>
                         {% else %}
                             <span class="oi oi-heart" title="heart" aria-hidden="true"></span>
                         {% endif %}
-                        {% if data.favoris.vue  %}
+                        {% if data.favoris is defined and data.favoris is not null and data.favoris.vue %}
                             <span class="oi oi-eye icone_red" title="eye" aria-hidden="true"></span>
                         {% else %}
                             <span class="oi oi-eye" title="eye" aria-hidden="true"></span>
