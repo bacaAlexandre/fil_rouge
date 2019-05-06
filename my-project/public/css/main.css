@@ -3,6 +3,13 @@
 .form-control-plaintext {
     color: white;
 }
+.bg-dark{
+    background-color: inherit!important;
+}
+.navbar-dark .navbar-brand{
+    color: red;
+    font-weight: 700!important;
+}
 
 /***********/
 html, body {
