@@ -7,6 +7,7 @@ use App\Service\Convertisseur;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 
 use Unirest;
 
@@ -23,7 +24,7 @@ class DefaultController extends AbstractController
     /**
      * @Route("", name="homepage")
      */
-    public function index()
+    public function index(string $message = null)
     {
         Unirest\Request::verifyPeer(false);
         $header = array('Accept' => 'application/json');
@@ -40,6 +41,11 @@ class DefaultController extends AbstractController
             $data[$i]['overview'] = $reponse->body->results[$i]->overview;
             $data[$i]['id'] = $reponse->body->results[$i]->id;
         }
+
+        if($message != null){
+            $this->get('session')->getFlashBag()->set('contact', $message);
+        }
+
         return $this->render('default/accueil.html.twig', array('data' => $data));
     }
 
@@ -75,5 +81,33 @@ class DefaultController extends AbstractController
             }
         }
         return $this->render('default/film.html.twig', array('data' => $data));
+    }
+
+    /**
+     * @Route("/contact", name="contact_admin")
+     */
+    public function contact()
+    {
+        return $this->render('default/contact.html.twig');
+    }
+
+    /**
+     * @Route("/contact/envoyer", name="envoyer_contact_admin")
+     */
+    public function sendContact(Request $request,\Swift_Mailer $mailer)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $user = $em->getRepository("App\\Application\\Sonata\\UserBundle\\Entity\\User")->find($this->getUser()->getId());
+
+        $message = (new \Swift_Message('Hello Email'))
+            ->setFrom('netflex.contact@mail.fr')
+            ->setTo('alexandre.baca@viacesi.fr')
+            ->setBody(
+                $this->renderView('default/contacter.mail.html.twig',['commentaire' => $request->request->get('commentaire'),'user' => $user]),
+                'text/html'
+            );
+        $mailer->send($message);
+
+        return $this->index('Le message a bien été envoyer.');
     }
 }

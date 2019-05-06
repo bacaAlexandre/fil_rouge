@@ -1,4 +1,10 @@
+/*****Surcharge boostrap******/
 
+.form-control-plaintext{
+    color: white;
+}
+
+/***********/
 html, body {
     box-sizing: border-box;
     background-color: rgb(21, 21, 21);
@@ -46,7 +52,10 @@ h1,h2,h3,h4,h5,h6{
     font-size: 34px;
     text-decoration: none;
 }
-
+.alert_accueil{
+    max-width: 80%;
+    margin: 0 auto 1em auto;
+}
 .accueil_regroupement {
     display: flex;
     flex-wrap: wrap;

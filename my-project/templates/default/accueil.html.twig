@@ -1,6 +1,9 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+    {% for flashMessage in app.session.flashbag.get('contact') %}
+        <div class="alert alert-success alert_accueil" role="alert"> {{ flashMessage }}</div>
+    {% endfor %}
     <div class="accueil_regroupement">
         {% for val in data %}
             <div class="accueil_bloc_image">
