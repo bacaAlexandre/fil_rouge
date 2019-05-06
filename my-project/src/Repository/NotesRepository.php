@@ -19,22 +19,22 @@ class NotesRepository extends ServiceEntityRepository
         parent::__construct($registry, Notes::class);
     }
 
-    // /**
-    //  * @return Notes[] Returns an array of Notes objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @return Notes[] Returns an array of Notes objects
+     **/
+    public function findAverageById($idFilm)
     {
-        return $this->createQueryBuilder('n')
-            ->andWhere('n.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('n.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        $qb = $this->_em->createQueryBuilder();
+        $qb->select('AVG(entity.valeur) as Moyenne')
+            ->from(Notes::class, 'entity')
+            ->leftJoin('entity.film',"film")
+            ->where('film.idApi = :id')
+            ->setParameters(array(
+                'id' => $idFilm,
+            ));
+        return $qb->getQuery()->getOneOrNullResult();
     }
-    */
+
 
     /*
     public function findOneBySomeField($value): ?Notes

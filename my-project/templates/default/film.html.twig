@@ -3,23 +3,114 @@
     <div class="film_bloc_haut">
         <img src="https://image.tmdb.org/t/p/w500{{ data.poster_path }}" alt="" class="film_poster">
         <div class="film_haut_info">
-            <h3>{{ data.title }}</h3>
-            <p>Sortie le : {{ data.release_date }}</p>
-            <p>Genre:
-            {%- for genre in data.genres -%}
-                <span class="film_genre">{{ genre.name }}</span>
-            {% endfor %}
-            </p>
-            <p>Durée: {{ data.runtime }}</p>
-            <q>{{ data.tagline }}</q>
-            <p>{{ data.overview }}</p>
-            <iframe width="420" height="315"
-                    src="{{ data.path_video }}">
-            </iframe>
+            <div class="film_header_haut">
+                <div>
+                    <h3>{{ data.title }}</h3>
+                    <p>Sortie le : {{ data.release_date }}</p>
+                    <p>Genre:
+                        {%- for genre in data.genres -%}
+                            <span class="film_genre">{{ genre.name }}</span>
+                        {% endfor %}
+                    </p>
+                    <p>Durée: {{ data.runtime }}</p>
+
+                </div>
+                <div class="film_haut_notes">
+                    {% if is_granted('ROLE_USER') %}
+                        <span class="oi oi-heart" title="heart" aria-hidden="true"></span>
+                        <span class="oi oi-eye" title="eye" aria-hidden="true"></span>
+                    {% endif %}
+                    <div class="film_bloc_etoile">
+                        {% if data.noteMoyenne is not  null %}
+                            <span>({{ data.noteMoyenne|round(1) }})</span>
+                        {% endif %}
+                        {% for i in 1..5 %}
+                            {% if data.note.valeur is defined and i <= data.note.valeur %}
+                                <span class="oi oi-star icone_red" title="star" data-status="1" data-place="{{ i }}"
+                                      aria-hidden="true"></span>
+                            {% else %}
+                                <span class="oi oi-star" title="star" data-status="0" data-place="{{ i }}"
+                                      aria-hidden="true"></span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% if  data.tagline %}
+                <q class="film_slogan">{{ data.tagline }}</q>
+            {% endif %}
+            <p class="film_description">{{ data.overview }}</p>
+            {% if data.path_video %}
+                <iframe width="420" height="315"
+                        src="{{ data.path_video }}">
+                </iframe>
+            {% endif %}
+
         </div>
     </div>
 
-{#    {% for img in data.images.backdrops %}#}
-{#        <img src="https://image.tmdb.org/t/p/w500{{ img.file_path }}" alt="">#}
-{#    {% endfor %}#}
+    {#    {% for img in data.images.backdrops %}#}
+    {#        <img src="https://image.tmdb.org/t/p/w500{{ img.file_path }}" alt="">#}
+    {#    {% endfor %}#}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $('.film_bloc_etoile span[title="star"]').hover(function () {
+            removeRed();
+            let place = $(this).data("place");
+            addRed(place, false);
+        });
+        $('.film_bloc_etoile span[title="star"]').click(function () {
+            let place = $(this).data("place");
+            addRed(place, true);
+            removeRed();
+            addNoteBdd(place);
+        });
+
+        $('.film_bloc_etoile').mouseleave(function () {
+            removeRed();
+        });
+
+
+        function removeRed() {
+            $('.film_bloc_etoile span[title="star"]').each(function () {
+                if ($(this).attr('data-status') < 1) {
+                    $(this).removeClass("icone_red");
+                }
+            })
+
+        }
+
+        function addRed(place, status) {
+            $('.film_bloc_etoile span[title="star"]').each(function () {
+                if ($(this).data('place') <= place) {
+                    if (status) {
+                        $(this).attr('data-status', 1);
+                    }
+                    $(this).addClass('icone_red');
+                } else {
+                    if (status) {
+                        $(this).attr('data-status', 0);
+                    }
+                }
+            })
+        }
+
+        function addNoteBdd(note) {
+            $.ajax({
+                url: "{{ path('add_note') }}",
+                dataType: "json",
+                method: "POST",
+                data: {
+                    note: note,
+                    idFilm:{{ data.id }},
+                    titre: "{{ data.title }}",
+                },
+                success: function (data) {
+                },
+            });
+        }
+    </script>
 {% endblock %}

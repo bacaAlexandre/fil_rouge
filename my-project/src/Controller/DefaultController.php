@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Films;
+use App\Entity\Notes;
 
 use App\Service\Convertisseur;
 use Symfony\Component\HttpFoundation\Response;
@@ -42,7 +44,7 @@ class DefaultController extends AbstractController
             $data[$i]['id'] = $reponse->body->results[$i]->id;
         }
 
-        if($message != null){
+        if ($message != null) {
             $this->get('session')->getFlashBag()->set('contact', $message);
         }
 
@@ -54,6 +56,7 @@ class DefaultController extends AbstractController
      */
     public function film(int $id)
     {
+        $em = $this->getDoctrine()->getManager();
         Unirest\Request::verifyPeer(false);
         $header = array('Accept' => 'application/json');
         $body = array(
@@ -72,6 +75,7 @@ class DefaultController extends AbstractController
         $data['tagline'] = $reponse->body->tagline;
         $data['overview'] = $reponse->body->overview;
         $data['genres'] = $reponse->body->genres;
+        $data['id'] = $reponse->body->id;
         $data['path_video'] = "";
         foreach ($reponse->body->videos->results as $result) {
 
@@ -79,6 +83,17 @@ class DefaultController extends AbstractController
                 $data['path_video'] = "https://www.youtube.com/embed/" . $result->key;
                 break;
             }
+        }
+        $noteMoyenne = $em->getRepository(Notes::class)->findAverageById($id);
+        $data['noteMoyenne'] = $noteMoyenne['Moyenne'];
+        if ($this->getUser() != null) {
+            $film = $em->getRepository(Films::class)->findOneBy(array("idApi" => $data['id']));
+            if($film != null){
+                $data['note'] = $em->getRepository(Notes::class)->findOneBy(array("user" => $this->getUser()->getId(), "film" => $film->getId()));
+            }else{
+                $data['note'] = null;
+            }
+
         }
         return $this->render('default/film.html.twig', array('data' => $data));
     }
@@ -94,7 +109,7 @@ class DefaultController extends AbstractController
     /**
      * @Route("/contact/envoyer", name="envoyer_contact_admin")
      */
-    public function sendContact(Request $request,\Swift_Mailer $mailer)
+    public function sendContact(Request $request, \Swift_Mailer $mailer)
     {
         $em = $this->getDoctrine()->getManager();
         $user = $em->getRepository("App\\Application\\Sonata\\UserBundle\\Entity\\User")->find($this->getUser()->getId());
@@ -103,11 +118,64 @@ class DefaultController extends AbstractController
             ->setFrom('netflex.contact@mail.fr')
             ->setTo('alexandre.baca@viacesi.fr')
             ->setBody(
-                $this->renderView('default/contacter.mail.html.twig',['commentaire' => $request->request->get('commentaire'),'user' => $user]),
+                $this->renderView('default/contacter.mail.html.twig', ['commentaire' => $request->request->get('commentaire'), 'user' => $user]),
                 'text/html'
             );
         $mailer->send($message);
 
         return $this->index('Le message a bien été envoyer.');
+    }
+
+    /**
+     * @Route("/addNote", name="add_note")
+     */
+    public function addNote(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $user = null;
+        if ($this->getUser() != null) {
+            $user = $em->getRepository("App\\Application\\Sonata\\UserBundle\\Entity\\User")->find($this->getUser()->getId());
+        }
+
+        $entityNote = null;
+        if ($user != null) {
+            $film = $this->checkFilm($request->request->get("idFilm"), $request->request->get("titre"));
+            $entityNote = $em->getRepository(Notes::class)->findOneBy(array("user" => $this->getUser()->getId(), "film" => $film->getId()));
+        }
+        if ($entityNote == null) {
+            $entityNote = new Notes();
+            $entityNote->setFilm($this->checkFilm($request->request->get("idFilm"), $request->request->get("titre")))
+                ->setUser($user);
+        }
+
+
+        $entityNote->setValeur($request->request->get('note'));
+
+
+        $em->persist($entityNote);
+        $em->flush();
+
+
+        return $this->json(['result' => 'ok']);
+    }
+
+
+    private function checkFilm($idApi, $nom)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $film = $em->getRepository(Films::class)->findOneBy(array("idApi" => $idApi));
+
+        if ($film == null) {
+            $entityFilm = new Films();
+            $entityFilm->setIdApi($idApi)
+                ->setNom($nom);
+            $em->persist($entityFilm);
+            $em->flush();
+
+            $film = $entityFilm;
+        }
+
+        return $film;
+
     }
 }

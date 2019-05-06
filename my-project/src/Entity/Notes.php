@@ -23,12 +23,12 @@ class Notes
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Application\Sonata\UserBundle\Entity\User", inversedBy="notes")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $user;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\films", inversedBy="notes")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Films", inversedBy="notes")
      * @ORM\JoinColumn(nullable=false)
      */
     private $film;
@@ -50,12 +50,12 @@ class Notes
         return $this;
     }
 
-    public function getUtilisateur(): ?User
+    public function getUser()
     {
         return $this->user;
     }
 
-    public function setUtilisateur(?User $user): self
+    public function setUser($user): self
     {
         $this->user = $user;
 
