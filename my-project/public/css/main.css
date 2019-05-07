@@ -3,12 +3,14 @@
 .form-control-plaintext {
     color: white;
 }
-.bg-dark{
-    background-color: inherit!important;
+
+.bg-dark {
+    background-color: inherit !important;
 }
-.navbar-dark .navbar-brand{
+
+.navbar-dark .navbar-brand {
     color: red;
-    font-weight: 700!important;
+    font-weight: 700 !important;
 }
 
 /***********/
@@ -155,6 +157,7 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 26px;
     min-width: 200px;
 }
+
 .icone_red {
     color: red;
 }
@@ -184,7 +187,7 @@ h1, h2, h3, h4, h5, h6 {
     text-justify: inter-word;
 }
 
-.film_bloc_video{
+.film_bloc_video {
     text-align: center;
 }
 
@@ -196,31 +199,40 @@ h1, h2, h3, h4, h5, h6 {
     margin: auto;
 }
 
-
+/************Recherche******************/
+.recherche_formulaire {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    align-items: center;
+}
 
 /****** Responsive ********/
 
 
 /**Parie film***/
 
-@media (max-width: 1200px){
-    .film_poster{
+@media (max-width: 1200px) {
+    .film_poster {
         display: none;
     }
 }
 
-@media (max-width: 750px){
-    .film_haut_info{
+@media (max-width: 750px) {
+    .film_haut_info {
         margin-left: 0;
         max-width: 100%;
     }
-    .film_header_haut{
+
+    .film_header_haut {
         flex-direction: column;
     }
-    .film_haut_notes{
+
+    .film_haut_notes {
         flex-direction: row;
     }
-    .film_bloc_video iframe{
+
+    .film_bloc_video iframe {
         max-width: 100%;
     }
 }

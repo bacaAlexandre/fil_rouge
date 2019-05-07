@@ -232,4 +232,78 @@ class DefaultController extends AbstractController
 
         return $this->json(['result' => 'ok']);
     }
+
+    /**
+     * @Route("/recherche", name="index_recherche")
+     */
+    public function indexRecherche()
+    {
+
+        Unirest\Request::verifyPeer(false);
+        $header = array('Accept' => 'application/json');
+        $body = array(
+            'api_key' => getenv('API_KEY'),
+            'language' => getenv('API_LANG'),
+            'query' => "action",
+            'page' => 1
+
+        );
+        $reponse = Unirest\Request::get('https://api.themoviedb.org/3/genre/movie/list', $header, $body);
+
+        return $this->render('default/recherche.film.html.twig',array('genres' => $reponse->body->genres));
+    }
+
+    /**
+     * @Route("/recherche/liste", name="recherche_film")
+     */
+    public function recherche(Request $request)
+    {
+        Unirest\Request::verifyPeer(false);
+        $header = array('Accept' => 'application/json');
+
+        if($request->request->get('titre') == "" && $request->request->get('genres') == null ){
+            $return['etat'] = "ko";
+            $return['data'] = "Pour une recherche vous devez renseigner un titre ou au moins un genre.";
+        }else{
+            if($request->request->get('titre') != ""){
+                $body = array(
+                    'api_key' => getenv('API_KEY'),
+                    'language' => getenv('API_LANG'),
+                    'query' => $request->request->get('titre'),
+                    'page' => 1
+                );
+                $reponse = Unirest\Request::get('https://api.themoviedb.org/3/search/movie', $header, $body);
+
+                for ($i = 0; $i < count($reponse->body->results); $i++) {
+                    if($request->request->get('genres') == null || count(array_intersect($request->request->get('genres'), $reponse->body->results[$i]->genre_ids)) > 0){
+                        $data[$i]['poster_path'] = $reponse->body->results[$i]->poster_path;
+                        $data[$i]['title'] = $reponse->body->results[$i]->title;
+                        $data[$i]['overview'] = $reponse->body->results[$i]->overview;
+                        $data[$i]['id'] = $reponse->body->results[$i]->id;
+                    }
+                }
+            }else{
+                $body = array(
+                    'api_key' => getenv('API_KEY'),
+                    'language' => getenv('API_LANG'),
+                    'with_genres' =>implode("|",$request->request->get('genres')),
+                    'page' => 1
+                );
+                $reponse = Unirest\Request::get('https://api.themoviedb.org/3/discover/movie', $header, $body);
+
+                for ($i = 0; $i < count($reponse->body->results); $i++) {
+                    $data[$i]['poster_path'] = $reponse->body->results[$i]->poster_path;
+                    $data[$i]['title'] = $reponse->body->results[$i]->title;
+                    $data[$i]['overview'] = $reponse->body->results[$i]->overview;
+                    $data[$i]['id'] = $reponse->body->results[$i]->id;
+
+                }
+            }
+            $return['etat'] = "ok";
+            $return['data'] = $data;
+        }
+
+        return $this->json(['result' => $return]);
+    }
+
 }

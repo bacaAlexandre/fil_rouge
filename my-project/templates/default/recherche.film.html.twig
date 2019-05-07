@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    <div class="recherche_formulaire">
+        <div class="form-group">
+            <label for="titre_recherche">Titre</label>
+            <input type="text" class="form-control" id="titre_recherche">
+        </div>
+        <div class="form-group">
+            <label for="select_genre">Genres</label>
+            <select multiple class="form-control" name="" id="select_genre">
+                {% for genre in genres %}
+                    <option value="{{ genre.id }}">{{ genre.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" id="btn_recherche" class="btn btn-outline-light">Recherche</button>
+    </div>
+    <div class="recherche_resultat">
+
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $('#btn_recherche').click(function () {
+            $.ajax({
+                url: "{{ path('recherche_film') }}",
+                dataType: "json",
+                method: "POST",
+                data: {
+                    titre: $('#titre_recherche').val(),
+                    genres: $('#select_genre').val(),
+                },
+                success: function (reponse) {
+                    $(".recherche_resultat").empty();
+                    let html = "";
+                    if (reponse.result.etat === "ko") {
+                        html += "<div class=\"alert alert-danger\" role=\"alert\">" + reponse.result.data + "</div>"
+                    } else {
+                        html += "<div class=\"accueil_regroupement\">";
+                        $.each(reponse.result.data, function (index, value) {
+                            let path = "{{ path('page_film',{'id':"value.id"}) }}";
+                            path = path.replace("value.id", value.id);
+
+                            html += '<div class="accueil_bloc_image"> ' +
+                                '<img src="https://image.tmdb.org/t/p/w500' + value.poster_path + '" alt=""> ' +
+                                '<div>' +
+                                '<h4>' + value.title + '</h4>' +
+                                '<p>' + value.overview + '</p>' +
+                                '<form action="' + path + '">' +
+                                '<button class="btn btn-outline-light">Détail</button></form> </div>  </div>';
+                        });
+                        html += "</div>";
+                    }
+                    $(".recherche_resultat").append(html);
+                },
+            });
+        });
+    </script>
+{% endblock %}
