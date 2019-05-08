@@ -58,6 +58,19 @@
 
         </div>
     </div>
+    <div class="film_bloc_commentaire">
+        {% if is_granted('ROLE_USER') %}
+        <form action="{{ path('add_commentaire') }}" method="post">
+            <div>
+                <label for="textarea_commentaire" class="form-group">Commentaire</label>
+                <textarea name="commentaire" class="form-control" id="textarea_commentaire" rows="5" required></textarea>
+            </div>
+            <input type="hidden" value="{{ data.id }}" name="idFilm">
+            <input type="hidden" value="{{ data.title }}" name="titre">
+            <button type="submit"  class="btn btn-outline-light">Envoyer</button>
+        </form>
+        {% endif %}
+    </div>
 
     {#    {% for img in data.images.backdrops %}#}
     {#        <img src="https://image.tmdb.org/t/p/w500{{ img.file_path }}" alt="">#}

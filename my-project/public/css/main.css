@@ -190,7 +190,14 @@ h1, h2, h3, h4, h5, h6 {
 .film_bloc_video {
     text-align: center;
 }
+.film_bloc_commentaire{
+    max-width: 90%;
+    margin: 2em auto ;
+}
 
+.film_bloc_commentaire textarea{
+   margin-bottom: 1em;
+}
 /**********Formulaire fosuser**************/
 
 .form_fosuser {

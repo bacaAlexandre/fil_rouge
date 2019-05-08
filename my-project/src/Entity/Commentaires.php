@@ -9,6 +9,10 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Commentaires
 {
+    public function __construct()
+    {
+        $this->date = new \DateTime();
+    }
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -33,6 +37,11 @@ class Commentaires
      */
     private $film;
 
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $date;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -50,12 +59,12 @@ class Commentaires
         return $this;
     }
 
-    public function getUtilisateur(): ?User
+    public function getUser()
     {
         return $this->user;
     }
 
-    public function setUtilisateur(?User $user): self
+    public function setUser( $user): self
     {
         $this->user = $user;
 
@@ -70,6 +79,18 @@ class Commentaires
     public function setFilm(?Films $film): self
     {
         $this->film = $film;
+
+        return $this;
+    }
+
+    public function getDate()
+    {
+        return $this->date;
+    }
+
+    public function setDate($date): self
+    {
+        $this->date = $date;
 
         return $this;
     }

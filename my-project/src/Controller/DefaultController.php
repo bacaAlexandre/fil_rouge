@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\Favoris;
 use App\Entity\Films;
 use App\Entity\Notes;
+use App\Entity\Commentaires;
+
 
 use App\Service\Convertisseur;
 use Symfony\Component\HttpFoundation\Response;
@@ -97,7 +99,6 @@ class DefaultController extends AbstractController
             }
 
         }
-        dump($data);
         return $this->render('default/film.html.twig', array('data' => $data));
     }
 
@@ -207,6 +208,7 @@ class DefaultController extends AbstractController
 
         return $this->json(['result' => 'ok']);
     }
+
     /**
      * @Route("/addVue", name="add_vue")
      */
@@ -250,7 +252,7 @@ class DefaultController extends AbstractController
         );
         $reponse = Unirest\Request::get('https://api.themoviedb.org/3/genre/movie/list', $header, $body);
 
-        return $this->render('default/recherche.film.html.twig',array('genres' => $reponse->body->genres));
+        return $this->render('default/recherche.film.html.twig', array('genres' => $reponse->body->genres));
     }
 
     /**
@@ -261,11 +263,11 @@ class DefaultController extends AbstractController
         Unirest\Request::verifyPeer(false);
         $header = array('Accept' => 'application/json');
 
-        if($request->request->get('titre') == "" && $request->request->get('genres') == null ){
+        if ($request->request->get('titre') == "" && $request->request->get('genres') == null) {
             $return['etat'] = "ko";
             $return['data'] = "Pour une recherche vous devez renseigner un titre ou au moins un genre.";
-        }else{
-            if($request->request->get('titre') != ""){
+        } else {
+            if ($request->request->get('titre') != "") {
                 $body = array(
                     'api_key' => getenv('API_KEY'),
                     'language' => getenv('API_LANG'),
@@ -275,18 +277,18 @@ class DefaultController extends AbstractController
                 $reponse = Unirest\Request::get('https://api.themoviedb.org/3/search/movie', $header, $body);
 
                 for ($i = 0; $i < count($reponse->body->results); $i++) {
-                    if($request->request->get('genres') == null || count(array_intersect($request->request->get('genres'), $reponse->body->results[$i]->genre_ids)) > 0){
+                    if ($request->request->get('genres') == null || count(array_intersect($request->request->get('genres'), $reponse->body->results[$i]->genre_ids)) > 0) {
                         $data[$i]['poster_path'] = $reponse->body->results[$i]->poster_path;
                         $data[$i]['title'] = $reponse->body->results[$i]->title;
                         $data[$i]['overview'] = $reponse->body->results[$i]->overview;
                         $data[$i]['id'] = $reponse->body->results[$i]->id;
                     }
                 }
-            }else{
+            } else {
                 $body = array(
                     'api_key' => getenv('API_KEY'),
                     'language' => getenv('API_LANG'),
-                    'with_genres' =>implode("|",$request->request->get('genres')),
+                    'with_genres' => implode("|", $request->request->get('genres')),
                     'page' => 1
                 );
                 $reponse = Unirest\Request::get('https://api.themoviedb.org/3/discover/movie', $header, $body);
@@ -306,4 +308,22 @@ class DefaultController extends AbstractController
         return $this->json(['result' => $return]);
     }
 
+    /**
+     * @Route("/addCommentaire", name="add_commentaire")
+     */
+    public function addCommentaire(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $user = $em->getRepository("App\\Application\\Sonata\\UserBundle\\Entity\\User")->find($this->getUser()->getId());
+        $film = $this->checkFilm($request->request->get("idFilm"), $request->request->get("titre"));
+        $entityCommentaire = new Commentaires();
+        $entityCommentaire->setUser($user)
+            ->setFilm($film)
+            ->setContenu($request->request->get('commentaire'));
+
+        $em->persist($entityCommentaire);
+        $em->flush();
+
+        return $this->film($request->request->get("idFilm"));
+    }
 }
