@@ -70,6 +70,17 @@
             <button type="submit"  class="btn btn-outline-light">Envoyer</button>
         </form>
         {% endif %}
+        {% for commentaire in data.commentaires %}
+            <div>
+                <span>Poster par :  {{ commentaire.user.username }}</span>
+                <span>Le {{ commentaire.date|date("d/m/Y H:i") }}</span>
+                {% if is_granted('ROLE_USER') and commentaire.user.id == app.user.id %}
+                    <span>modifier</span>
+                    <span>supprimé</span>
+                {% endif %}
+                <p>{{ commentaire.contenu }}</p>
+            </div>
+        {% endfor %}
     </div>
 
     {#    {% for img in data.images.backdrops %}#}

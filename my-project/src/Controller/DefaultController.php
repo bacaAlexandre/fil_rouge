@@ -89,16 +89,17 @@ class DefaultController extends AbstractController
         }
         $noteMoyenne = $em->getRepository(Notes::class)->findAverageById($id);
         $data['noteMoyenne'] = $noteMoyenne['Moyenne'];
+        $film = $this->checkFilm($data['id'], $data['title']);
+        $data['commentaires'] = $film->getCommentaires();
         if ($this->getUser() != null) {
-            $film = $em->getRepository(Films::class)->findOneBy(array("idApi" => $data['id']));
             if ($film != null) {
                 $data['note'] = $em->getRepository(Notes::class)->findOneBy(array("user" => $this->getUser()->getId(), "film" => $film->getId()));
                 $data['favoris'] = $em->getRepository(Favoris::class)->findOneBy(array("user" => $this->getUser()->getId(), "film" => $film->getId()));
             } else {
                 $data['note'] = null;
             }
-
         }
+
         return $this->render('default/film.html.twig', array('data' => $data));
     }
 
