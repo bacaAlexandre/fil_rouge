@@ -6,12 +6,12 @@
         <div>
             <div class="form-group">
                 <label for="email_contact" class="required">Email</label>
-                <input type="text" id="email_contact" readonly aria-describedby="emailHelp" class="form-control-plaintext" value="emailllllll">
+                <input type="text" id="email_contact" readonly aria-describedby="emailHelp" class="form-control-plaintext" value="{{ user.email }}">
                 <small id="emailHelp" class="form-text text-muted">Email utiliser pour la réponse de l'administrateur.</small>
             </div>
             <div class="form-group">
                 <label for="pseudo_contact" class="required">Pseudo</label>
-                <input type="text" id="pseudo_contact" readonly  class="form-control-plaintext" value="pseudooooooo">
+                <input type="text" id="pseudo_contact" readonly  class="form-control-plaintext" value="{{ user.username }}">
             </div>
             <div class="form-group">
                 <label for="commentaire_contact" class="required">Commentaire</label>

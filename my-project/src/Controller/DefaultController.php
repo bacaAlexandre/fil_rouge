@@ -112,7 +112,10 @@ class DefaultController extends AbstractController
      */
     public function contact()
     {
-        return $this->render('default/contact.html.twig');
+        $em = $this->getDoctrine()->getManager();
+        $user = $em->getRepository("App\\Application\\Sonata\\UserBundle\\Entity\\User")->find($this->getUser()->getId());
+        dump($user);
+        return $this->render('default/contact.html.twig',array('user' => $user));
     }
 
     /**
