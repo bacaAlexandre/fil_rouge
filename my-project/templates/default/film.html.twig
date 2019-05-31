@@ -71,14 +71,25 @@
         </form>
         {% endif %}
         {% for commentaire in data.commentaires %}
-            <div>
-                <span>Poster par :  {{ commentaire.user.username }}</span>
-                <span>Le {{ commentaire.date|date("d/m/Y H:i") }}</span>
-                {% if is_granted('ROLE_USER') and commentaire.user.id == app.user.id %}
-                    <span>modifier</span>
-                    <span>supprimé</span>
-                {% endif %}
-                <p>{{ commentaire.contenu }}</p>
+            <div class="film_commentaire">
+                <header>
+                    <div>
+                        <span>Poster par :  {{ commentaire.user.username }}</span>
+                        <span>Le {{ commentaire.date|date("d/m/Y H:i") }}</span>
+                    </div>
+                    {% if is_granted('ROLE_USER') and commentaire.user.id == app.user.id %}
+                        <form action="{{ path('delete_commentaire') }}" method="post">
+                            <input type="hidden" value="{{ commentaire.id }}" name="id">
+                            <input type="hidden" value="{{ data.id }}" name="idFilm">
+                            <button id="supprimer_commentaire" class="btn btn-outline-danger" name="">supprimé</button>
+                        </form>
+                    {% endif %}
+                </header>
+                <div>
+                    <p>{{ commentaire.contenu }}</p>
+                </div>
+
+
             </div>
         {% endfor %}
     </div>

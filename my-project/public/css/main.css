@@ -198,6 +198,16 @@ h1, h2, h3, h4, h5, h6 {
 .film_bloc_commentaire textarea{
    margin-bottom: 1em;
 }
+.film_commentaire{
+    margin-top: 2em;
+    border: solid 2px white;
+    border-radius: 5px;
+    padding: 5px;
+}
+.film_commentaire header{
+    display: flex;
+    justify-content: space-between;
+}
 /**********Formulaire fosuser**************/
 
 .form_fosuser {

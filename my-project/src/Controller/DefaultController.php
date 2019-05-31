@@ -59,6 +59,11 @@ class DefaultController extends AbstractController
      */
     public function film(int $id)
     {
+        return $this->render('default/film.html.twig', array('data' => $this->dataFilm($id)));
+    }
+
+    private function dataFilm(int $id)
+    {
         $em = $this->getDoctrine()->getManager();
         Unirest\Request::verifyPeer(false);
         $header = array('Accept' => 'application/json');
@@ -99,8 +104,7 @@ class DefaultController extends AbstractController
                 $data['note'] = null;
             }
         }
-
-        return $this->render('default/film.html.twig', array('data' => $data));
+        return $data;
     }
 
     /**
@@ -326,5 +330,20 @@ class DefaultController extends AbstractController
         $em->flush();
 
         return $this->film($request->request->get("idFilm"));
+    }
+
+    /**
+     * @Route("/deleteCommentaire", name="delete_commentaire")
+     */
+    public function deleteCommentaire(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $commentaire = $em->getRepository(Commentaires::class)->find($request->request->get('id'));
+
+        $em->remove($commentaire);
+
+        $em->flush();
+
+        return $this->render('default/film.html.twig', array('data' => $this->dataFilm($request->request->get("idFilm"))));
     }
 }
