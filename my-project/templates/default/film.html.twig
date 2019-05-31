@@ -30,7 +30,7 @@
                     {% endif %}
                     <div class="film_bloc_etoile">
                         {% if data.noteMoyenne is not  null %}
-                            <span>({{ data.noteMoyenne|round(1) }})</span>
+                            <span id="note_moyenne">({{ data.noteMoyenne|round(1) }})</span>
                         {% endif %}
                         {% for i in 1..5 %}
                             {% if data.note.valeur is defined and i <= data.note.valeur %}
@@ -60,15 +60,16 @@
     </div>
     <div class="film_bloc_commentaire">
         {% if is_granted('ROLE_USER') %}
-        <form action="{{ path('add_commentaire') }}" method="post">
-            <div>
-                <label for="textarea_commentaire" class="form-group">Commentaire</label>
-                <textarea name="commentaire" class="form-control" id="textarea_commentaire" rows="5" required></textarea>
-            </div>
-            <input type="hidden" value="{{ data.id }}" name="idFilm">
-            <input type="hidden" value="{{ data.title }}" name="titre">
-            <button type="submit"  class="btn btn-outline-light">Envoyer</button>
-        </form>
+            <form action="{{ path('add_commentaire') }}" method="post">
+                <div>
+                    <label for="textarea_commentaire" class="form-group">Commentaire</label>
+                    <textarea name="commentaire" class="form-control" id="textarea_commentaire" rows="5"
+                              required></textarea>
+                </div>
+                <input type="hidden" value="{{ data.id }}" name="idFilm">
+                <input type="hidden" value="{{ data.title }}" name="titre">
+                <button type="submit" class="btn btn-outline-light">Envoyer</button>
+            </form>
         {% endif %}
         {% for commentaire in data.commentaires %}
             <div class="film_commentaire">
@@ -156,6 +157,8 @@
                     titre: "{{ data.title }}",
                 },
                 success: function (data) {
+                    $('#note_moyenne').empty();
+                    $('#note_moyenne').html("("+parseFloat(data.result.Moyenne).toFixed(2)+")");
                 },
             });
         }
@@ -181,7 +184,6 @@
                 },
             });
         });
-
 
 
         /*****PARTIE VUE*****/

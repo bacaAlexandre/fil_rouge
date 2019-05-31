@@ -167,8 +167,8 @@ class DefaultController extends AbstractController
         $em->persist($entityNote);
         $em->flush();
 
-
-        return $this->json(['result' => 'ok']);
+        $noteMoyenne = $em->getRepository(Notes::class)->findAverageById($request->request->get("idFilm"));
+        return $this->json(['result' => $noteMoyenne]);
     }
 
 
