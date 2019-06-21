@@ -1,0 +1,212 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    <div class="film_bloc_haut">
+        <img src="https://image.tmdb.org/t/p/w500{{ data.poster_path }}" alt="" class="film_poster">
+        <div class="film_haut_info">
+            <div class="film_header_haut">
+                <div>
+                    <h3>{{ data.title }}</h3>
+                    <p>Sortie le : {{ data.release_date }}</p>
+                    <p>Genre:
+                        {%- for genre in data.genres -%}
+                            <span class="film_genre">{{ genre.name }}</span>
+                        {% endfor %}
+                    </p>
+                    <p>Durée: {{ data.runtime }}</p>
+
+                </div>
+                <div class="film_haut_notes">
+                    {% if is_granted('ROLE_USER') %}
+                        {% if data.favoris is defined and data.favoris is not null and data.favoris.favoris %}
+                            <span class="oi oi-heart icone_red" title="heart" aria-hidden="true"></span>
+                        {% else %}
+                            <span class="oi oi-heart" title="heart" aria-hidden="true"></span>
+                        {% endif %}
+                        {% if data.favoris is defined and data.favoris is not null and data.favoris.vue %}
+                            <span class="oi oi-eye icone_red" title="eye" aria-hidden="true"></span>
+                        {% else %}
+                            <span class="oi oi-eye" title="eye" aria-hidden="true"></span>
+                        {% endif %}
+                    {% endif %}
+                    <div class="film_bloc_etoile">
+                        {% if data.noteMoyenne is not  null %}
+                            <span id="note_moyenne">({{ data.noteMoyenne|round(1) }})</span>
+                        {% endif %}
+                        {% for i in 1..5 %}
+                            {% if data.note.valeur is defined and i <= data.note.valeur %}
+                                <span class="oi oi-star icone_red" title="star" data-status="1" data-place="{{ i }}"
+                                      aria-hidden="true"></span>
+                            {% else %}
+                                <span class="oi oi-star" title="star" data-status="0" data-place="{{ i }}"
+                                      aria-hidden="true"></span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% if  data.tagline %}
+                <q class="film_slogan">{{ data.tagline }}</q>
+            {% endif %}
+            <p class="film_description">{{ data.overview }}</p>
+            {% if data.path_video %}
+                <div class="film_bloc_video">
+                    <iframe width="420" height="315"
+                            src="{{ data.path_video }}">
+                    </iframe>
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+    <div class="film_bloc_commentaire">
+        {% if is_granted('ROLE_USER') %}
+            <form action="{{ path('add_commentaire') }}" method="post">
+                <div>
+                    <label for="textarea_commentaire" class="form-group">Commentaire</label>
+                    <textarea name="commentaire" class="form-control" id="textarea_commentaire" rows="5"
+                              required></textarea>
+                </div>
+                <input type="hidden" value="{{ data.id }}" name="idFilm">
+                <input type="hidden" value="{{ data.title }}" name="titre">
+                <button type="submit" class="btn btn-outline-light">Envoyer</button>
+            </form>
+        {% endif %}
+        {% for commentaire in data.commentaires %}
+            <div class="film_commentaire">
+                <header>
+                    <div>
+                        <span>Poster par :  {{ commentaire.user.username }}</span>
+                        <span>Le {{ commentaire.date|date("d/m/Y H:i") }}</span>
+                    </div>
+                    {% if is_granted('ROLE_USER') and commentaire.user.id == app.user.id %}
+                        <form action="{{ path('delete_commentaire') }}" method="post">
+                            <input type="hidden" value="{{ commentaire.id }}" name="id">
+                            <input type="hidden" value="{{ data.id }}" name="idFilm">
+                            <button id="supprimer_commentaire" class="btn btn-outline-danger" name="">supprimé</button>
+                        </form>
+                    {% endif %}
+                </header>
+                <div>
+                    <p>{{ commentaire.contenu }}</p>
+                </div>
+
+
+            </div>
+        {% endfor %}
+    </div>
+
+    {#    {% for img in data.images.backdrops %}#}
+    {#        <img src="https://image.tmdb.org/t/p/w500{{ img.file_path }}" alt="">#}
+    {#    {% endfor %}#}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+
+        /****PARTIE NOTES****/
+        $('.film_bloc_etoile span[title="star"]').hover(function () {
+            removeRed();
+            let place = $(this).data("place");
+            addRed(place, false);
+        });
+        $('.film_bloc_etoile span[title="star"]').click(function () {
+            let place = $(this).data("place");
+            addRed(place, true);
+            removeRed();
+            addNoteBdd(place);
+        });
+
+        $('.film_bloc_etoile').mouseleave(function () {
+            removeRed();
+        });
+
+
+        function removeRed() {
+            $('.film_bloc_etoile span[title="star"]').each(function () {
+                if ($(this).attr('data-status') < 1) {
+                    $(this).removeClass("icone_red");
+                }
+            })
+
+        }
+
+        function addRed(place, status) {
+            $('.film_bloc_etoile span[title="star"]').each(function () {
+                if ($(this).data('place') <= place) {
+                    if (status) {
+                        $(this).attr('data-status', 1);
+                    }
+                    $(this).addClass('icone_red');
+                } else {
+                    if (status) {
+                        $(this).attr('data-status', 0);
+                    }
+                }
+            })
+        }
+
+        function addNoteBdd(note) {
+            $.ajax({
+                url: "{{ path('add_note') }}",
+                dataType: "json",
+                method: "POST",
+                data: {
+                    note: note,
+                    idFilm:{{ data.id }},
+                    titre: "{{ data.title }}",
+                },
+                success: function (data) {
+                    $('#note_moyenne').empty();
+                    $('#note_moyenne').html("("+parseFloat(data.result.Moyenne).toFixed(2)+")");
+                },
+            });
+        }
+
+        /*****PARTIE FAVORIS*****/
+
+        $('.film_haut_notes span[title=heart]').click(function () {
+            $(this).toggleClass('icone_red');
+            let favoris = 0;
+            if ($(this).hasClass('icone_red')) {
+                favoris = 1;
+            }
+            $.ajax({
+                url: "{{ path('add_favoris') }}",
+                dataType: "json",
+                method: "POST",
+                data: {
+                    favoris: favoris,
+                    idFilm:{{ data.id }},
+                    titre: "{{ data.title }}",
+                },
+                success: function (data) {
+                },
+            });
+        });
+
+
+        /*****PARTIE VUE*****/
+
+        $('.film_haut_notes span[title=eye]').click(function () {
+            $(this).toggleClass('icone_red');
+            let vue = 0;
+            if ($(this).hasClass('icone_red')) {
+                vue = 1;
+            }
+            $.ajax({
+                url: "{{ path('add_vue') }}",
+                dataType: "json",
+                method: "POST",
+                data: {
+                    vue: vue,
+                    idFilm:{{ data.id }},
+                    titre: "{{ data.title }}",
+                },
+                success: function (data) {
+                },
+            });
+        });
+
+    </script>
+{% endblock %}

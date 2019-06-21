@@ -1,0 +1,39 @@
+framework:
+  templating:
+    engines: ['twig', 'php']
+
+#
+#fos_user:
+#  db_driver: orm
+#  firewall_name: main
+#  user_class: App\Entity\User
+##  user_class: App\Sonata\UserBundle\Entity\User
+#  from_email: {address: "fosub@localhost", sender_name: FOSUB}
+#  use_flash_notifications: false
+#  group:
+#    group_class: App\Entity\Group
+#    group_manager: sonata.user.orm.group_manager
+#  service:
+#    user_manager: sonata.user.orm.user_manager
+
+
+fos_user:
+  db_driver:      orm # can be orm or odm
+  firewall_name:  main
+  user_class:     App\Application\Sonata\UserBundle\Entity\User
+
+  group:
+    group_class:   App\Application\Sonata\UserBundle\Entity\Group
+    group_manager: sonata.user.orm.group_manager
+
+  service:
+    user_manager: sonata.user.orm.user_manager
+
+  from_email:
+    address: "fosub@localhost"
+    sender_name: "FOSUB"
+
+  profile:
+    form:
+      type: App\Form\ProfileFormType
+

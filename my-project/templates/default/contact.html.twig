@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="form_fosuser">
+    <form action="{{ path('envoyer_contact_admin') }}" method="post">
+        <div>
+            <div class="form-group">
+                <label for="email_contact" class="required">Email</label>
+                <input type="text" id="email_contact" readonly aria-describedby="emailHelp" class="form-control-plaintext" value="{{ user.email }}">
+                <small id="emailHelp" class="form-text text-muted">Email utiliser pour la réponse de l'administrateur.</small>
+            </div>
+            <div class="form-group">
+                <label for="pseudo_contact" class="required">Pseudo</label>
+                <input type="text" id="pseudo_contact" readonly  class="form-control-plaintext" value="{{ user.username }}">
+            </div>
+            <div class="form-group">
+                <label for="commentaire_contact" class="required">Commentaire</label>
+                <textarea type="text" id="commentaire_contact" name="commentaire" class="form-control" rows="5" required></textarea>
+            </div>
+
+        </div>
+        <div>
+            <input type="submit" class="btn btn-outline-light" value="Envoyer">
+        </div>
+    </form>
+</div>
+{% endblock %}

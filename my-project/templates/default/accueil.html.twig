@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {% for flashMessage in app.session.flashbag.get('contact') %}
+        <div class="alert alert-success alert_accueil" role="alert"> {{ flashMessage }}</div>
+    {% endfor %}
+    <div class="accueil_regroupement">
+        {% for val in data %}
+            <div class="accueil_bloc_image">
+                <img src="https://image.tmdb.org/t/p/w500{{ val.poster_path }}" alt="">
+                <div>
+                    <h4>{{ val.title }}</h4>
+                    <p>{{ val.overview }}</p>
+                    <form action="{{ path('page_film',{'id':val.id }) }}" target="_blank">
+                        <button class="btn btn-outline-light">Détail</button>
+                    </form>
+                </div>
+            </div>
+
+        {% endfor %}
+    </div>
+
+
+{% endblock %}
